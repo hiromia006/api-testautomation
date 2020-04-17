@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+}
+
+group 'api-testautomation'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'com.fasterxml.jackson.core:jackson-databind:2.10.3'
+    testCompile 'io.rest-assured:rest-assured:4.3.0'
+    testCompile group: 'org.testng', name: 'testng', version: '7.1.0'
+    testCompile 'com.thedeanda:lorem:2.1'
+}
+
+test {
+    useTestNG()
+}
+
+test {
+    useTestNG() {
+        if (project.hasProperty('testng.suites')) {
+            project.property('testng.suites').toString().split(',').each { suite ->
+                suites 'src/test/resources/' + suite + '-suite.xml'
+            }
+        }
+
+        if (project.hasProperty('testng.parallel')) {
+            parallel project.property('testng.parallel')
+        }
+        if (project.hasProperty('testng.threadCount')) {
+            threadCount project.property('testng.threadCount') as int
+        }
+        if (project.hasProperty('testng.includeGroups')) {
+            includeGroups project.property('testng.includeGroups')
+        }
+        if (project.hasProperty('testng.excludeGroups')) {
+            excludeGroups project.property('testng.excludeGroups')
+        }
+    }
+
+}
