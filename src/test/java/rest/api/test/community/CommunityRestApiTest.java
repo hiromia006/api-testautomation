@@ -9,8 +9,7 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.path.json.JsonPath.with;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.*;
 
 public class CommunityRestApiTest extends BaseApiTest {
 
@@ -27,13 +26,13 @@ public class CommunityRestApiTest extends BaseApiTest {
 
     @Test
     public void createAnIdeaShouldSucceed() {
-        Long campaignId = with(
+        int campaignId = with(
                 given()
                         .spec(specForCommunity())
                         .when()
                         .get("/campaigns")
-                        .asString()).getLong("[0].id");
-        System.out.println(campaignId);
+                        .asString()
+        ).getInt("[0].id");
 
         String text = LoremIpsum.getInstance().getParagraphs(1, 1);
         String title = LoremIpsum.getInstance().getTitle(5);
@@ -51,18 +50,21 @@ public class CommunityRestApiTest extends BaseApiTest {
                 .assertThat()
                 .spec(responseSpec())
                 .body("text", equalToIgnoringCase(text))
-                .body("title", equalToIgnoringCase(title));
+                .body("title", equalToIgnoringCase(title))
+                .body("campaignId", equalTo(campaignId));
     }
 
     @Test
     public void updateAnIdeaShouldSucceed() {
-        Long campaignId = with(
+        int campaignId = with(
                 given()
                         .spec(specForCommunity())
                         .when()
                         .get("/campaigns")
-                        .asString()).getLong("[0].id");
-        System.out.println(campaignId);
+                        .asString()
+        ).getInt("[0].id");
+
+
         String text = LoremIpsum.getInstance().getParagraphs(1, 1);
         String title = LoremIpsum.getInstance().getTitle(5);
         Map<String, Object> jsonAsMap = new HashMap<>();
@@ -70,13 +72,14 @@ public class CommunityRestApiTest extends BaseApiTest {
         jsonAsMap.put("title", title);
         jsonAsMap.put("campaignId", campaignId);
 
-        Long ideaId = with(given()
-                .spec(specForCommunity())
-                .body(jsonAsMap)
-                .when()
-                .post("/idea")
-                .asString())
-                .getLong("id");
+        int ideaId = with(
+                given()
+                        .spec(specForCommunity())
+                        .body(jsonAsMap)
+                        .when()
+                        .post("/idea")
+                        .asString()
+        ).getInt("id");
         String textUpdate = LoremIpsum.getInstance().getParagraphs(1, 1);
         String titleUpdate = LoremIpsum.getInstance().getTitle(5);
         Map<String, Object> jsonAsMapUpdate = new HashMap<>();
@@ -94,6 +97,46 @@ public class CommunityRestApiTest extends BaseApiTest {
                 .assertThat()
                 .spec(responseSpec())
                 .body("text", equalToIgnoringCase(textUpdate))
-                .body("title", equalToIgnoringCase(titleUpdate));
+                .body("title", equalToIgnoringCase(titleUpdate))
+                .body("id", equalTo(ideaId))
+                .body("campaignId", equalTo(campaignId));
+    }
+
+    @Test
+    public void getIdeasShouldSucceed() {
+        given()
+                .spec(specForCommunity())
+                .when()
+                .get("/ideas")
+                .then()
+                .spec(responseSpec())
+                .body("size()", greaterThan(1));
+    }
+
+    @Test
+    public void postACommentAnIdea() {
+        String response = given()
+                .spec(specForCommunity())
+                .when()
+                .get("/ideas")
+                .asString();
+        int ideaId = with(response).getInt("[0].id");
+        int campaignId = with(response).getInt("[0].campaignId");
+
+        String text = LoremIpsum.getInstance().getParagraphs(1, 1);
+        Map<String, Object> json = new HashMap<>();
+        json.put("text", text);
+
+        given()
+                .spec(specForCommunity())
+                .when()
+                .body(json)
+                .post("/ideas/" + ideaId + "/comment")
+                .then()
+                .assertThat()
+                .spec(responseSpec())
+                .body("text", equalTo(text))
+                .body("parentId", equalTo(ideaId))
+                .body("campaignId", equalTo(campaignId));
     }
 }
