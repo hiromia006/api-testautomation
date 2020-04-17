@@ -139,4 +139,26 @@ public class CommunityRestApiTest extends BaseApiTest {
                 .body("parentId", equalTo(ideaId))
                 .body("campaignId", equalTo(campaignId));
     }
+
+    @Test
+    public void getCommentsShouldSucceed() {
+        given()
+                .spec(specForCommunity())
+                .when()
+                .get("/comments")
+                .then()
+                .spec(responseSpec())
+                .body("size()", greaterThan(1));
+    }
+
+    @Test
+    public void getCommentAllShouldSucceed() {
+        given()
+                .spec(specForCommunity())
+                .when()
+                .get("/comments/all")
+                .then()
+                .spec(responseSpec())
+                .body("size()", greaterThan(1));
+    }
 }
