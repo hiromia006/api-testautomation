@@ -1,6 +1,7 @@
 package rest.api.test.community;
 
 import com.thedeanda.lorem.LoremIpsum;
+import io.restassured.path.json.JsonPath;
 import org.testng.annotations.Test;
 import rest.api.test.BaseApiTest;
 
@@ -11,7 +12,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.path.json.JsonPath.with;
 import static org.hamcrest.Matchers.*;
 
-public class CommunityRestApiTest extends BaseApiTest {
+public class CommunityIdeaRestApiTest extends BaseApiTest {
 
     @Test(enabled = true)
     public void getCampaignsShouldSucceed() {
@@ -100,6 +101,16 @@ public class CommunityRestApiTest extends BaseApiTest {
                 .body("title", equalToIgnoringCase(titleUpdate))
                 .body("id", equalTo(ideaId))
                 .body("campaignId", equalTo(campaignId));
+
+        given()
+                .spec(specForCommunity())
+                .when()
+                .delete("/idea/" + ideaId + "/delete")
+                .then()
+                .assertThat()
+                .spec(responseSpec())
+                .body("size()", greaterThanOrEqualTo(1))
+                .body("id", equalTo(ideaId));
     }
 
     @Test
@@ -114,51 +125,48 @@ public class CommunityRestApiTest extends BaseApiTest {
     }
 
     @Test
-    public void postACommentAnIdea() {
-        String response = given()
+    public void deleteAnIdeaShouldSucceed() {
+        int ideaId = with(given()
                 .spec(specForCommunity())
                 .when()
                 .get("/ideas")
-                .asString();
-        int ideaId = with(response).getInt("[0].id");
-        int campaignId = with(response).getInt("[0].campaignId");
+                .asString()
 
-        String text = LoremIpsum.getInstance().getParagraphs(1, 1);
-        Map<String, Object> json = new HashMap<>();
-        json.put("text", text);
+        ).getInt("[0].id");
 
         given()
                 .spec(specForCommunity())
                 .when()
-                .body(json)
-                .post("/ideas/" + ideaId + "/comment")
+                .delete("/idea/" + ideaId + "/delete")
                 .then()
                 .assertThat()
                 .spec(responseSpec())
-                .body("text", equalTo(text))
-                .body("parentId", equalTo(ideaId))
+                .body("size()", greaterThanOrEqualTo(1))
+                .body("id", equalTo(ideaId));
+    }
+
+    @Test
+    public void getIdeaByNumberShouldSucceed() {
+        JsonPath response = with(given()
+                .spec(specForCommunity())
+                .when()
+                .get("/ideas")
+                .asString()
+        );
+
+        int ideaNumber = response.getInt("[0].ideaNumber");
+        int ideaId = response.getInt("[0].id");
+        int campaignId = response.getInt("[0].campaignId");
+        given()
+                .spec(specForCommunity())
+                .when()
+                .get("/idea/number/" + ideaNumber)
+                .then()
+                .assertThat()
+                .spec(responseSpec())
+                .body("size()", greaterThanOrEqualTo(1))
+                .body("ideaNumber", equalTo(ideaNumber))
+                .body("id", equalTo(ideaId))
                 .body("campaignId", equalTo(campaignId));
-    }
-
-    @Test
-    public void getCommentsShouldSucceed() {
-        given()
-                .spec(specForCommunity())
-                .when()
-                .get("/comments")
-                .then()
-                .spec(responseSpec())
-                .body("size()", greaterThan(1));
-    }
-
-    @Test
-    public void getCommentAllShouldSucceed() {
-        given()
-                .spec(specForCommunity())
-                .when()
-                .get("/comments/all")
-                .then()
-                .spec(responseSpec())
-                .body("size()", greaterThan(1));
     }
 }
