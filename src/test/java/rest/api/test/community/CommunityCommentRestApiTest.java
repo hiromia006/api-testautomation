@@ -48,7 +48,7 @@ public class CommunityCommentRestApiTest extends BaseApiTest {
                 .get("/comments")
                 .then()
                 .spec(responseSpec())
-                .body("size()", greaterThan(1));
+                .body("size()", greaterThan(0));
     }
 
     @Test

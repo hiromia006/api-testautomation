@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Smoke Suite">
+    <test name="Smoke Suite">
+        <classes>
+            <class name="rest.api.test.community.CommunityIdeaRestApiTest"/>
+            <class name="rest.api.test.community.CommunityCommentRestApiTest"/>
+        </classes>
+    </test>
+</suite>
