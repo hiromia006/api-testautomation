@@ -29,19 +29,6 @@ test {
                 suites 'src/test/resources/' + suite + '-suite.xml'
             }
         }
-
-        if (project.hasProperty('testng.parallel')) {
-            parallel project.property('testng.parallel')
-        }
-        if (project.hasProperty('testng.threadCount')) {
-            threadCount project.property('testng.threadCount') as int
-        }
-        if (project.hasProperty('testng.includeGroups')) {
-            includeGroups project.property('testng.includeGroups')
-        }
-        if (project.hasProperty('testng.excludeGroups')) {
-            excludeGroups project.property('testng.excludeGroups')
-        }
     }
 
 }
