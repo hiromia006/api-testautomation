@@ -169,4 +169,16 @@ public class CommunityIdeaRestApiTest extends BaseApiTest {
                 .body("id", equalTo(ideaId))
                 .body("campaignId", equalTo(campaignId));
     }
+
+
+    @Test
+    public void getAllStatusIdeasShouldSucceed() {
+        given()
+                .spec(specForCommunity())
+                .when()
+                .get("/idea/status/all")
+                .then()
+                .spec(responseSpec())
+                .body("size()", greaterThan(1));
+    }
 }
