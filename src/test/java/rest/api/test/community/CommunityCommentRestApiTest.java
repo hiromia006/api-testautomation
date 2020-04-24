@@ -40,7 +40,7 @@ public class CommunityCommentRestApiTest extends BaseApiTest {
                 .body("campaignId", equalTo(campaignId));
     }
 
-    @Test
+    @Test(enabled = false)
     public void getCommentsShouldSucceed() {
         given()
                 .spec(specForCommunity())
