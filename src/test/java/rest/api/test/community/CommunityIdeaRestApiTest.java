@@ -170,7 +170,6 @@ public class CommunityIdeaRestApiTest extends BaseApiTest {
                 .body("campaignId", equalTo(campaignId));
     }
 
-
     @Test
     public void getAllStatusIdeasShouldSucceed() {
         given()
