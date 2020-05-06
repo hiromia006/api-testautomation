@@ -1,6 +1,10 @@
 package rest.api.test.community;
 
 import com.thedeanda.lorem.LoremIpsum;
+import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import io.restassured.path.json.JsonPath;
 import org.json.simple.JSONArray;
 import org.testng.annotations.Test;
@@ -15,6 +19,9 @@ import static org.hamcrest.Matchers.*;
 
 public class CommunityIdeaRestApiTest extends BaseApiTest {
 
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Verify home page title")
+    @Story("Test verify base page title")
     @Test(enabled = true)
     public void getCampaignsShouldSucceed() {
         given()
@@ -26,6 +33,9 @@ public class CommunityIdeaRestApiTest extends BaseApiTest {
                 .body("size()", greaterThan(1));
     }
 
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Verify home page title2")
+    @Story("Test verify base page title2")
     @Test
     public void createAnIdeaShouldSucceed() {
         int campaignId = with(
@@ -56,6 +66,9 @@ public class CommunityIdeaRestApiTest extends BaseApiTest {
                 .body("campaignId", equalTo(campaignId));
     }
 
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Verify home page title")
+    @Story("Test verify base page title")
     @Test
     public void createAnIdeaWithTagsShouldSucceed() {
         int campaignId = with(
@@ -93,6 +106,9 @@ public class CommunityIdeaRestApiTest extends BaseApiTest {
                 .body("tags[0]", equalTo(tag));
     }
 
+    @Severity(SeverityLevel.TRIVIAL)
+    @Description("Verify home page title3")
+    @Story("Test verify base page title3")
     @Test
     public void updateAnIdeaShouldSucceed() {
         int campaignId = with(
