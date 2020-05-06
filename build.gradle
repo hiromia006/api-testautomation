@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'io.qameta.allure' version '2.7.0'
 }
 
 group 'api-testautomation'
@@ -19,17 +18,12 @@ dependencies {
     testCompile 'com.thedeanda:lorem:2.1'
     testCompile 'com.googlecode.json-simple:json-simple:1.1.1'
     testCompile 'io.qameta.allure:allure-rest-assured:2.13.0'
-    testCompile 'io.qameta.allure:allure-testng:2.13.0'
 }
 
 test {
     useTestNG()
 }
 
-// allure {
-//    version = '2.13.0'
-//    downloadLinkFormat = 'https://dl.bintray.com/qameta/maven/io/qameta/allure/allure-commandline/%s/allure-commandline-%<s.zip'
-//}
 
 test {
     useTestNG() {

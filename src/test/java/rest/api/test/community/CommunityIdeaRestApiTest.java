@@ -251,4 +251,43 @@ public class CommunityIdeaRestApiTest extends BaseApiTest {
                 .spec(responseSpec())
                 .body("size()", greaterThan(0));
     }
+
+    @Test
+    public void getGetAllTagsForIdeaShouldSucceed() {
+        int campaignId = with(
+                given()
+                        .spec(specForCommunity())
+                        .when()
+                        .get("/campaigns")
+                        .asString()
+        ).getInt("[0].id");
+
+        String text = LoremIpsum.getInstance().getParagraphs(1, 1);
+        String title = LoremIpsum.getInstance().getTitle(5);
+        String tag = LoremIpsum.getInstance().getTitle(1).toLowerCase();
+        JSONArray arrTags = new JSONArray();
+        arrTags.add(tag);
+
+        Map<String, Object> jsonAsMap = new HashMap<>();
+        jsonAsMap.put("text", text);
+        jsonAsMap.put("title", title);
+        jsonAsMap.put("campaignId", campaignId);
+        jsonAsMap.put("tags", arrTags);
+
+        int ideaId = with(given()
+                .spec(specForCommunity())
+                .body(jsonAsMap)
+                .when()
+                .post("/idea")
+                .asString()).getInt("id");
+        System.out.println("Idea Id : " + ideaId);
+
+        given()
+                .spec(specForCommunity())
+                .when()
+                .get("/idea/" + ideaId + "/tags")
+                .then()
+                .spec(responseSpec())
+                .body("size()", greaterThan(0));
+    }
 }

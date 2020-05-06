@@ -1,5 +1,6 @@
 package rest.api.test;
 
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
@@ -24,6 +25,7 @@ public abstract class BaseApiTest {
                 .setContentType(ContentType.JSON)
                 .setAccept(ContentType.JSON)
                 .addHeader("api_token", API_TOKEN)
+                .addFilter(new AllureRestAssured())
                 .build();
     }
 
