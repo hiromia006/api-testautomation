@@ -9,11 +9,11 @@ import io.restassured.specification.ResponseSpecification;
 import org.testng.annotations.BeforeClass;
 
 public abstract class BaseApiTest {
-    protected static final String API_TOKEN = "42f2cfa8-4edd-46a0-9302-dbea252a9748";
+    protected static final String API_TOKEN = "e9c0e2c0-748b-4195-859a-6c6e2416a219";
 
     @BeforeClass
     protected void setup() {
-        RestAssured.baseURI = "https://ideascale.club";
+        RestAssured.baseURI = "https://ideascale.rocks";
         RestAssured.port = 443;
         RestAssured.basePath = "/a/rest/v1";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
