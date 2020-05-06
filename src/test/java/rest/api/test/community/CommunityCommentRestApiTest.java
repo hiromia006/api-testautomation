@@ -59,7 +59,7 @@ public class CommunityCommentRestApiTest extends BaseApiTest {
                 .get("/comments/all")
                 .then()
                 .spec(responseSpec())
-                .body("size()", greaterThan(1));
+                .body("size()", greaterThan(0));
     }
 
 }

@@ -2,6 +2,7 @@ package rest.api.test.community;
 
 import com.thedeanda.lorem.LoremIpsum;
 import io.restassured.path.json.JsonPath;
+import org.json.simple.JSONArray;
 import org.testng.annotations.Test;
 import rest.api.test.BaseApiTest;
 
@@ -53,6 +54,43 @@ public class CommunityIdeaRestApiTest extends BaseApiTest {
                 .body("text", equalToIgnoringCase(text))
                 .body("title", equalToIgnoringCase(title))
                 .body("campaignId", equalTo(campaignId));
+    }
+
+    @Test
+    public void createAnIdeaWithTagsShouldSucceed() {
+        int campaignId = with(
+                given()
+                        .spec(specForCommunity())
+                        .when()
+                        .get("/campaigns")
+                        .asString()
+        ).getInt("[0].id");
+
+        String text = LoremIpsum.getInstance().getParagraphs(1, 1);
+        String title = LoremIpsum.getInstance().getTitle(5);
+        String tag = LoremIpsum.getInstance().getTitle(1).toLowerCase();
+        JSONArray arrTags = new JSONArray();
+        arrTags.add(tag);
+        ;
+
+        Map<String, Object> jsonAsMap = new HashMap<>();
+        jsonAsMap.put("text", text);
+        jsonAsMap.put("title", title);
+        jsonAsMap.put("campaignId", campaignId);
+        jsonAsMap.put("tags", arrTags);
+
+        given()
+                .spec(specForCommunity())
+                .body(jsonAsMap)
+                .when()
+                .post("/idea")
+                .then()
+                .assertThat()
+                .spec(responseSpec())
+                .body("text", equalToIgnoringCase(text))
+                .body("title", equalToIgnoringCase(title))
+                .body("campaignId", equalTo(campaignId))
+                .body("tags[0]", equalTo(tag));
     }
 
     @Test
@@ -179,5 +217,38 @@ public class CommunityIdeaRestApiTest extends BaseApiTest {
                 .then()
                 .spec(responseSpec())
                 .body("size()", greaterThan(1));
+    }
+
+    @Test
+    public void getHotIdeasShouldSucceed() {
+        given()
+                .spec(specForCommunity())
+                .when()
+                .get("/ideas/hot")
+                .then()
+                .spec(responseSpec())
+                .body("size()", greaterThan(0));
+    }
+
+    @Test
+    public void getRandomIdeasShouldSucceed() {
+        given()
+                .spec(specForCommunity())
+                .when()
+                .get("/ideas/random")
+                .then()
+                .spec(responseSpec())
+                .body("size()", greaterThan(0));
+    }
+
+    @Test
+    public void getRecentIdeasShouldSucceed() {
+        given()
+                .spec(specForCommunity())
+                .when()
+                .get("/ideas/recent")
+                .then()
+                .spec(responseSpec())
+                .body("size()", greaterThan(0));
     }
 }
